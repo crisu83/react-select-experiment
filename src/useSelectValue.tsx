@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ISelectOption, ISelectOptionHandler } from "./Select";
+import { ISelectOption, ISelectOptionHandler } from "./types";
 
 type ISelectValueHandler<T> = (event?: React.ChangeEvent<T>) => void;
 

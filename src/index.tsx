@@ -1,12 +1,8 @@
 import * as React from "react";
 import { render } from "react-dom";
 import styled from "styled-components";
-import {
-  NativeSelect,
-  ISelectOptionHandler,
-  ISelectOption,
-  Autocomplete
-} from "./Select";
+import { NativeSelect, Autocomplete } from "./Select";
+import { ISelectOptionHandler, ISelectOption } from "./types";
 
 const Container = styled.div`
   font-family: Montserrat;
@@ -65,15 +61,6 @@ const Checkbox = styled.input`
   margin: 0 5px 0 0;
 `;
 
-const Output = styled.pre`
-  background: #f5f5f5;
-  border-radius: 0.5em;
-  font-family: "Roboto Mono";
-  font-size: 14px;
-  margin-bottom: 15px;
-  padding: 20px;
-`;
-
 const Tip = styled.p`
   font-size: 14px;
 `;
@@ -100,14 +87,12 @@ const options: ISelectOption[] = [
 ];
 
 const App: React.FunctionComponent = () => {
-  const [option, setOption] = React.useState(options[0]);
   const [persistEvents, setPersistEvents] = React.useState(false);
 
   const handleNativeSelectChange: ISelectOptionHandler<HTMLSelectElement> = (
     selectedOption,
     event?
   ) => {
-    setOption(selectedOption);
     console.log("change", selectedOption, event);
   };
 
@@ -124,7 +109,7 @@ const App: React.FunctionComponent = () => {
         <SelectWrapper>
           <Select
             id="selectField"
-            value={option.value}
+            defaultValue="1"
             options={options}
             handleChange={handleNativeSelectChange}
             persistEvents={persistEvents}
@@ -136,7 +121,7 @@ const App: React.FunctionComponent = () => {
         <Autocomplete
           id="autocompleteField"
           placeholder="Start typing..."
-          value={option.value}
+          value="2"
           options={options}
           handleChange={() => {}}
           persistEvents={persistEvents}
@@ -148,7 +133,6 @@ const App: React.FunctionComponent = () => {
           Persist events
         </Label>
       </Field>
-      <Output>{JSON.stringify(option)}</Output>
       <Tip>
         <b>Protip:</b> Open the console and play around with the component.
       </Tip>

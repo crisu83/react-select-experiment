@@ -1,11 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import useSelectValue from "./useSelectValue";
-
-export interface ISelectOption extends React.HTMLProps<HTMLOptionElement> {
-  options?: ISelectOption[];
-  value?: string;
-}
+import { ISelectOption, ISelectOptionHandler } from "./types";
 
 interface IOptionGroupProps extends React.HTMLProps<HTMLOptGroupElement> {
   options?: ISelectOption[];
@@ -22,13 +18,8 @@ const OptionGroup: React.FunctionComponent<IOptionGroupProps> = ({
   </optgroup>
 );
 
-export type ISelectOptionHandler<T> = (
-  selectedOption: ISelectOption,
-  event?: React.ChangeEvent<T>
-) => void;
-
 export interface INativeSelectProps extends React.HTMLProps<HTMLSelectElement> {
-  value: string;
+  value?: string;
   options: ISelectOption[];
   handleChange?: ISelectOptionHandler<HTMLSelectElement>;
   persistEvents?: boolean;
