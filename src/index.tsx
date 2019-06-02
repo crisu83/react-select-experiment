@@ -1,7 +1,7 @@
 import * as React from "react";
 import { render } from "react-dom";
 import styled from "styled-components";
-import { NativeSelect, Autocomplete } from "./Select";
+import NativeSelect from "./NativeSelect";
 import { ISelectOptionHandler, ISelectOption } from "./types";
 
 const Container = styled.div`
@@ -116,7 +116,7 @@ const App: React.FunctionComponent = () => {
           />
         </SelectWrapper>
       </Field>
-      <Field id="autocomplete">
+      {/* <Field id="autocomplete">
         <Label htmlFor="autocompleteField">Some autocomplete</Label>
         <Autocomplete
           id="autocompleteField"
@@ -126,7 +126,7 @@ const App: React.FunctionComponent = () => {
           handleChange={() => {}}
           persistEvents={persistEvents}
         />
-      </Field>
+      </Field> */}
       <Field id="persistEvents">
         <Label>
           <Checkbox type="checkbox" onChange={handlePersistEventsChange} />
