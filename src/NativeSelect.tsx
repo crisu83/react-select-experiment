@@ -1,41 +1,26 @@
 import * as React from "react";
 import useSelectValue from "./useSelectValue";
-import { ISelectOption, ISelectOptionHandler } from "./types";
-
-interface IOptionGroupProps extends React.HTMLProps<HTMLOptGroupElement> {
-  options?: ISelectOption[];
-}
-
-const OptionGroup: React.FunctionComponent<IOptionGroupProps> = ({
-  options,
-  ...groupProps
-}) => (
-  <optgroup {...groupProps}>
-    {options.map(optionProps => (
-      <option {...optionProps} />
-    ))}
-  </optgroup>
-);
+import { ISelectOptionHandler, ISelectOption } from "./types";
 
 export interface INativeSelectProps extends React.HTMLProps<HTMLSelectElement> {
   value?: string;
   options: ISelectOption[];
-  handleChange?: ISelectOptionHandler<HTMLSelectElement>;
+  handleChange: ISelectOptionHandler;
   persistEvents?: boolean;
 }
 
-export const NativeSelect: React.FunctionComponent<INativeSelectProps> = ({
+function NativeSelect({
   value,
   options,
-  handleChange = () => {},
+  handleChange,
   persistEvents = false,
   ...selectProps
-}) => {
-  const [selectedValue, handleSelectValue] = useSelectValue<HTMLSelectElement>(
+}: INativeSelectProps) {
+  const [selectedValue, handleSelectValue] = useSelectValue(
     value,
-    persistEvents,
     options,
-    handleChange
+    handleChange,
+    persistEvents
   );
 
   return (
@@ -44,15 +29,11 @@ export const NativeSelect: React.FunctionComponent<INativeSelectProps> = ({
       value={selectedValue}
       onChange={e => handleSelectValue(e)}
     >
-      {options.map(groupOrOptionProps =>
-        groupOrOptionProps.options ? (
-          <OptionGroup {...groupOrOptionProps} />
-        ) : (
-          <option {...groupOrOptionProps} />
-        )
-      )}
+      {options.map(props => (
+        <option {...props} />
+      ))}
     </select>
   );
-};
+}
 
 export default NativeSelect;

@@ -2,12 +2,9 @@ import * as React from "react";
 
 export type SelectInputElement = HTMLSelectElement | HTMLInputElement;
 
-export interface ISelectOption extends React.HTMLProps<HTMLOptionElement> {
-  options?: ISelectOption[];
-  value?: string;
-}
+export interface ISelectOption extends React.HTMLProps<HTMLOptionElement> {}
 
-export type ISelectOptionHandler<T = SelectInputElement> = (
+export type ISelectOptionHandler = (
   selectedOption: ISelectOption,
-  event?: React.ChangeEvent<T>
+  event?: React.ChangeEvent<SelectInputElement>
 ) => void;

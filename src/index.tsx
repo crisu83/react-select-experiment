@@ -2,6 +2,7 @@ import * as React from "react";
 import { render } from "react-dom";
 import styled from "styled-components";
 import NativeSelect from "./NativeSelect";
+import mapOptions from "./mapOptions";
 import { ISelectOptionHandler, ISelectOption } from "./types";
 
 const Container = styled.div`
@@ -66,34 +67,34 @@ const Tip = styled.p`
 `;
 
 const options: ISelectOption[] = [
-  { label: "Select something...", value: "", disabled: true },
-  { label: "Some option", value: "1" },
-  { label: "Some other option", value: "2" },
-  { label: "Yet another option", value: "3" },
-  {
-    label: "Some group",
-    options: [
-      { label: "A nested option", value: "4" },
-      { label: "Another nested option", value: "5" }
-    ]
-  },
-  {
-    label: "Some other group",
-    options: [
-      { label: "A nested option", value: "6" },
-      { label: "Another nested option", value: "7" }
-    ]
-  }
+  { id: null, title: "Select something...", disabled: true },
+  { id: "1", title: "Some option" },
+  { id: "2", title: "Some other option" },
+  { id: "3", title: "Yet another option" }
+  // {
+  //   label: "Some group",
+  //   options: [
+  //     { label: "A nested option", value: "4" },
+  //     { label: "Another nested option", value: "5" }
+  //   ]
+  // },
+  // {
+  //   label: "Some other group",
+  //   options: [
+  //     { label: "A nested option", value: "6" },
+  //     { label: "Another nested option", value: "7" }
+  //   ]
+  // }
 ];
 
 const App: React.FunctionComponent = () => {
   const [persistEvents, setPersistEvents] = React.useState(false);
 
-  const handleNativeSelectChange: ISelectOptionHandler<HTMLSelectElement> = (
+  const handleNativeSelectChange: ISelectOptionHandler = (
     selectedOption,
     event?
   ) => {
-    console.log("change", selectedOption, event);
+    console.log("select optoin", selectedOption, event);
   };
 
   const handlePersistEventsChange = (): void => {
@@ -110,7 +111,7 @@ const App: React.FunctionComponent = () => {
           <Select
             id="selectField"
             defaultValue="1"
-            options={options}
+            options={mapOptions(options, "title", "id")}
             handleChange={handleNativeSelectChange}
             persistEvents={persistEvents}
           />

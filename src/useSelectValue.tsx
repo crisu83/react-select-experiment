@@ -1,33 +1,30 @@
 import * as React from "react";
-import { ISelectOption, ISelectOptionHandler } from "./types";
+import {
+  SelectInputElement,
+  ISelectOptionHandler,
+  ISelectOption
+} from "./types";
 
-type ISelectValueHandler<T> = (event?: React.ChangeEvent<T>) => void;
+type ISelectValueHandler = (
+  event?: React.ChangeEvent<SelectInputElement>
+) => void;
 
-function useSelectValue<T = HTMLSelectElement | HTMLInputElement>(
+function useSelectValue(
   initialValue: string,
-  persistEvents: boolean,
   options: ISelectOption[],
-  handleChange: ISelectOptionHandler<T>
-): [string, ISelectValueHandler<T>] {
+  handleChange: ISelectOptionHandler,
+  persistEvents: boolean
+): [string, ISelectValueHandler] {
   const [selectedValue, setSelectedValue] = React.useState(initialValue);
 
   const findOptionByValue = (
     value: string,
     options: ISelectOption[]
-  ): ISelectOption =>
-    options
-      // First we need to flatten the options
-      .reduce(
-        (previousValue, currentValue) =>
-          currentValue.options
-            ? [...previousValue, ...currentValue.options]
-            : [...previousValue, currentValue],
-        []
-      )
-      // Then we filter out the option with the given value
-      .filter(option => option.value === value)[0];
+  ): ISelectOption => options.filter(option => option.value === value)[0];
 
-  const handleSelectValue = (event: React.ChangeEvent<T>) => {
+  const handleSelectValue = (
+    event: React.ChangeEvent<SelectInputElement>
+  ): void => {
     const newValue = event.target.value;
     const selectedOption = findOptionByValue(newValue, options);
 
