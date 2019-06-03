@@ -23,11 +23,17 @@ function NativeSelect({
     persistEvents
   );
 
+  const handleChangeInternal = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ): void => {
+    handleSelectValue(event.target.value, event);
+  };
+
   return (
     <select
       {...selectProps}
       value={selectedValue}
-      onChange={e => handleSelectValue(e)}
+      onChange={handleChangeInternal}
     >
       {options.map(props => (
         <option {...props} />

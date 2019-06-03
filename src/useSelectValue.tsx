@@ -1,12 +1,9 @@
 import * as React from "react";
-import {
-  SelectInputElement,
-  ISelectOptionHandler,
-  ISelectOption
-} from "./types";
+import { ISelectOptionHandler, ISelectOption } from "./types";
 
 type ISelectValueHandler = (
-  event?: React.ChangeEvent<SelectInputElement>
+  selectedValue: string,
+  event?: React.SyntheticEvent
 ) => void;
 
 function useSelectValue(
@@ -22,13 +19,10 @@ function useSelectValue(
     options: ISelectOption[]
   ): ISelectOption => options.filter(option => option.value === value)[0];
 
-  const handleSelectValue = (
-    event: React.ChangeEvent<SelectInputElement>
-  ): void => {
-    const newValue = event.target.value;
-    const selectedOption = findOptionByValue(newValue, options);
+  const handleSelectValue: ISelectValueHandler = (selectedValue, event) => {
+    setSelectedValue(selectedValue);
 
-    setSelectedValue(newValue);
+    const selectedOption = findOptionByValue(selectedValue, options);
 
     if (persistEvents) {
       // React events are pooled, so if we want to hold on to the event,

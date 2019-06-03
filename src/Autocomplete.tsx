@@ -1,6 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
-import NativeSelect from "./NativeSelect";
+import { ISelectOption, ISelectOptionHandler } from "./types";
+import useSelectValue from "./useSelectValue";
 
 const AutocompleteWrapper = styled.div`
   font-size: 14px;
@@ -22,7 +23,7 @@ const AutocompleteInput = styled.input<IAutocompleteInputProps>`
   :focus {
     outline: none;
   }
-` as React.FunctionComponent<IAutocompleteInputProps>;
+`;
 
 const AutocompleteList = styled.ul`
   border: 1px solid #aaa;
@@ -33,58 +34,101 @@ const AutocompleteList = styled.ul`
   padding: 4px 0;
 `;
 
-const AutocompleteItem = styled.li`
+interface IAutocompleteItemProps {
+  isDisabled?: boolean;
+  isSelected?: boolean;
+}
+
+const AutocompleteItem = styled.li<IAutocompleteItemProps>`
+  background-color: ${props => (props.isSelected ? "#f5f5f5" : "#fff")};
+  color: ${props => (props.isDisabled ? "#888" : "#000")};
+  cursor: default;
+  font-weight: ${props => (props.isSelected ? 700 : 400)};
   padding: 6px 12px;
+  user-select: none;
 `;
 
-interface IAutocompleteProps extends INativeSelectProps {
+export interface IAutocompleteProps extends React.HTMLProps<HTMLInputElement> {
   placeholder: string;
+  value?: string;
+  options: ISelectOption[];
+  handleChange: ISelectOptionHandler;
+  persistEvents?: boolean;
 }
 
 export const Autocomplete: React.FunctionComponent<IAutocompleteProps> = ({
-  placeholder,
   value,
   options,
-  ...selectProps
+  handleChange,
+  persistEvents = false,
+  ...inputProps
 }) => {
+  const selectedOption = options.filter(option => option.value === value)[0];
+  const initialIInputValue = selectedOption ? selectedOption.label : "";
+
   const [isOpen, setIsOpen] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState(initialIInputValue);
   const [filteredOptions, setFilteredOptions] = React.useState(options);
-  const [selectedValue, setSelectedValue] = React.useState(value);
+  const [selectedValue, setSelectedValue] = useSelectValue(
+    value,
+    options,
+    handleChange,
+    persistEvents
+  );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const searchValue = event.target.value;
+    const newValue = event.target.value;
+    setInputValue(newValue);
     setFilteredOptions(
-      options.filter(option => option.label.startsWith(searchValue))
+      options.filter(option => option.label.startsWith(newValue))
     );
+  };
+
+  const handleChangeInternal = (
+    selectedOption: ISelectOption,
+    event: React.MouseEvent
+  ): void => {
+    if (selectedOption.disabled) {
+      return;
+    }
+    setInputValue(selectedOption.label);
+    setSelectedValue(String(selectedOption.value), event);
+    setIsOpen(false);
+    console.log("autocomplete change", selectedValue);
+  };
+
+  const handleKeyPress = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ): void => {
+    // TODO: Add support for selecting using the keyboard
+    // event.persist();
+    // console.log(event.key, event.keyCode);
   };
 
   return (
     <AutocompleteWrapper>
+      {/* TODO: Fix type issue */}
       <AutocompleteInput
-        placeholder={placeholder}
+        {...inputProps}
+        value={inputValue}
         isOpen={isOpen}
         onFocus={_ => setIsOpen(true)}
-        onBlur={_ => setIsOpen(false)}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          handleInputChange(e)
-        }
+        onChange={handleInputChange}
+        onKeyPress={handleKeyPress}
       />
       {isOpen && (
         <AutocompleteList>
-          {filteredOptions.map(option =>
-            // TODO: Add support for option groups
-            option.options ? null : (
-              <AutocompleteItem>{option.label}</AutocompleteItem>
-            )
-          )}
+          {filteredOptions.map(option => (
+            <AutocompleteItem
+              onClick={e => handleChangeInternal(option, e)}
+              isSelected={option.value === selectedValue}
+              isDisabled={option.disabled}
+            >
+              {option.label}
+            </AutocompleteItem>
+          ))}
         </AutocompleteList>
       )}
-      <NativeSelect
-        {...selectProps}
-        value={value}
-        options={options}
-        style={{ display: "none" }}
-      />
     </AutocompleteWrapper>
   );
 };
